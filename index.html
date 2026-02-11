@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do You Love Me?</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        
+        h1 {
+            color: #ff6b8b;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .heart-icon {
+            font-size: 5rem;
+            color: #ff6b8b;
+            margin-bottom: 20px;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            position: relative;
+            min-height: 120px;
+            flex-wrap: wrap;
+        }
+        
+        .love-btn {
+            padding: 18px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            position: absolute;
+        }
+        
+        #yesBtn {
+            background-color: #ff6b8b;
+            color: white;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        #yesBtn:hover {
+            background-color: #ff4d73;
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 12px 20px rgba(255, 107, 139, 0.3);
+        }
+        
+        #noBtn {
+            background-color: #6c757d;
+            color: white;
+            transition: all 0.1s ease;
+            position: absolute;
+            z-index: 5;
+        }
+        
+        #noBtn:hover {
+            background-color: #5a6268;
+        }
+        
+        .response {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: rgba(255, 107, 139, 0.1);
+            border-radius: 15px;
+            font-size: 2rem;
+            color: #ff6b8b;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 1s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hearts-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 107, 139, 0.7);
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: floatUp 4s linear forwards;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            color: #6c757d;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .love-btn {
+                padding: 15px 30px;
+                font-size: 1.3rem;
+            }
+            
+            .buttons-container {
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="hearts-container" id="heartsContainer"></div>
+        
+        <div class="heart-icon">
+            <i class="fas fa-heart"></i>
+        </div>
+        
+        <h1>Do you love me?</h1>
+        
+        <div class="buttons-container" id="buttonsContainer">
+            <button class="love-btn" id="yesBtn">Yes! <i class="fas fa-heart"></i></button>
+            <button class="love-btn" id="noBtn">No <i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="response" id="response">
+            <i class="fas fa-heart"></i> I love you too! <i class="fas fa-heart"></i>
+        </div>
+        
+        <div class="instructions">
+            Try to click the "No" button if you can!
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const response = document.getElementById('response');
+            const container = document.getElementById('container');
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            const heartsContainer = document.getElementById('heartsContainer');
+            
+            // Function to generate random position within container
+            function getRandomPosition() {
+                const containerRect = buttonsContainer.getBoundingClientRect();
+                const buttonRect = noBtn.getBoundingClientRect();
+                
+                // Calculate max positions to keep button fully inside container
+                const maxX = containerRect.width - buttonRect.width;
+                const maxY = containerRect.height - buttonRect.height;
+                
+                // Generate random positions
+                const randomX = Math.random() * maxX;
+                const randomY = Math.random() * maxY;
+                
+                return { x: randomX, y: randomY };
+            }
+            
+            // Function to move the "No" button to a random position
+            function moveNoButton() {
+                const newPos = getRandomPosition();
+                noBtn.style.left = `${newPos.x}px`;
+                noBtn.style.top = `${newPos.y}px`;
+                
+                // Add a little shake effect
+                noBtn.style.transform = 'translate(0, 0) scale(0.95)';
+                setTimeout(() => {
+                    noBtn.style.transform = 'translate(0, 0) scale(1)';
+                }, 150);
+            }
+            
+            // Move "No" button when hovered
+            noBtn.addEventListener('mouseover', moveNoButton);
+            
+            // Also move when touched (for mobile)
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                moveNoButton();
+            });
+            
+            // Also move when clicked (in case they manage to click it)
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                moveNoButton();
+                
+                // Show a funny message
+                const funnyMessages = [
+                    "Nice try!",
+                    "Almost!",
+                    "You can't catch me!",
+                    "Not so fast!",
+                    "Try again!",
+                    "Too slow!"
+                ];
+                const randomMessage = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+                noBtn.textContent = `${randomMessage} No `;
+                setTimeout(() => {
+                    noBtn.innerHTML = 'No <i class="fas fa-times"></i>';
+                }, 1000);
+            });
+            
+            // "Yes" button click handler
+            yesBtn.addEventListener('click', function() {
+                // Show the response
+                response.style.display = 'block';
+                
+                // Hide the buttons
+                yesBtn.style.display = 'none';
+                noBtn.style.display = 'none';
+                
+                // Change container background
+                container.style.background = 'rgba(255, 255, 255, 0.95)';
+                container.style.boxShadow = '0 15px 35px rgba(255, 107, 139, 0.3)';
+                
+                // Create floating hearts
+                createHearts(20);
+                
+                // Continue creating hearts every second for 5 seconds
+                let heartInterval = setInterval(() => {
+                    createHearts(5);
+                }, 1000);
+                
+                // Stop creating hearts after 5 seconds
+                setTimeout(() => {
+                    clearInterval(heartInterval);
+                }, 5000);
+            });
+            
+            // Function to create floating hearts
+            function createHearts(count) {
+                for (let i = 0; i < count; i++) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('floating-heart');
+                    heart.innerHTML = '<i class="fas fa-heart"></i>';
+                    
+                    // Random position
+                    const startX = Math.random() * 100;
+                    heart.style.left = `${startX}%`;
+                    
+                    // Random size
+                    const size = 0.5 + Math.random() * 1.5;
+                    heart.style.fontSize = `${size}rem`;
+                    
+                    // Random animation duration
+                    const duration = 3 + Math.random() * 3;
+                    heart.style.animationDuration = `${duration}s`;
+                    
+                    // Random delay
+                    const delay = Math.random() * 2;
+                    heart.style.animationDelay = `${delay}s`;
+                    
+                    heartsContainer.appendChild(heart);
+                    
+                    // Remove heart after animation completes
+                    setTimeout(() => {
+                        heart.remove();
+                    }, (duration + delay) * 1000);
+                }
+            }
+            
+            // Initialize with the "No" button in a random position
+            setTimeout(() => {
+                moveNoButton();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
